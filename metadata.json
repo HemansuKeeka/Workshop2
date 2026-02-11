@@ -1,0 +1,7 @@
+{
+  "name": "FreelanceFlow",
+  "description": "A vibrant, hype-driven platform for modern freelancers to showcase their work and connect with a elite community.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
