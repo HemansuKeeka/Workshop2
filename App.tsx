@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AlertTriangle, RefreshCw, WifiOff } from 'lucide-react';
-import Navbar from './components/Navbar';
-import LandingPage from './components/LandingPage';
-import SignIn from './components/Auth/SignIn';
-import SignUp from './components/Auth/SignUp';
-import Welcome from './components/Welcome';
-import { UserProfile } from './types';
-import { supabase } from './supabase';
+import Navbar from './components/Navbar.tsx';
+import LandingPage from './components/LandingPage.tsx';
+import SignIn from './components/Auth/SignIn.tsx';
+import SignUp from './components/Auth/SignUp.tsx';
+import Welcome from './components/Welcome.tsx';
+import { UserProfile } from './types.ts';
+import { supabase } from './supabase.ts';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
@@ -28,7 +28,6 @@ const App: React.FC = () => {
             .single();
 
           if (profile) {
-            // Updated: removed 'as any' since id is now part of UserProfile
             setCurrentUser({ ...profile, id: session.user.id } as UserProfile);
           }
         }
@@ -50,7 +49,6 @@ const App: React.FC = () => {
           .select('*')
           .eq('id', session.user.id)
           .single();
-        // Updated: removed 'as any' since id is now part of UserProfile
         if (profile) setCurrentUser({ ...profile, id: session.user.id } as UserProfile);
       } else {
         setCurrentUser(null);

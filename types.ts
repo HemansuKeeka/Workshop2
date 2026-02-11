@@ -1,3 +1,4 @@
+import React from 'react';
 
 export interface UserProfile {
   id: string;
@@ -20,5 +21,6 @@ export interface Testimonial {
 export interface Feature {
   title: string;
   description: string;
+  // Fix: Added React import to resolve the React namespace for ReactNode
   icon: React.ReactNode;
 }

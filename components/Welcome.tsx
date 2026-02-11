@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  LayoutGrid, Users, FolderOpen, PieChart, Moon, Bell, Plus, 
-  MoreHorizontal, Star, Smartphone, Laptop, Chrome, Watch, X, Check,
+  LayoutGrid, Users, FolderOpen, Plus, 
+  MoreHorizontal, Smartphone, Laptop, Chrome, Watch, X, Check,
   Briefcase, Sparkles, Loader2, Rocket, Cloud
 } from 'lucide-react';
-import { UserProfile } from '../types';
-import { SKILL_OPTIONS } from '../constants';
-import { supabase } from '../supabase';
+import { UserProfile } from '../types.ts';
+import { SKILL_OPTIONS } from '../constants.tsx';
+import { supabase } from '../supabase.ts';
 
 interface WelcomeProps {
   user: UserProfile;
@@ -23,11 +23,9 @@ interface PortfolioItem {
 }
 
 const Welcome: React.FC<WelcomeProps> = ({ user }) => {
-  const [activeTab, setActiveTab] = useState('All Portfolios');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  // Fixed: Property 'is_subscribed' now exists on UserProfile
   const [isSubscribed, setIsSubscribed] = useState(user.is_subscribed);
   const [loadingItems, setLoadingItems] = useState(true);
   const [portfolios, setPortfolios] = useState<PortfolioItem[]>([]);
@@ -46,7 +44,7 @@ const Welcome: React.FC<WelcomeProps> = ({ user }) => {
   const fetchPortfolios = async () => {
     setLoadingItems(true);
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('portfolios')
         .select('*')
         .order('created_at', { ascending: false });
@@ -63,10 +61,9 @@ const Welcome: React.FC<WelcomeProps> = ({ user }) => {
     if (!newPortfolio.projectName || !newPortfolio.clientName) return;
 
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('portfolios')
         .insert([{
-          // Fixed: Removed 'as any' since id is now part of UserProfile
           user_id: user.id,
           name: newPortfolio.projectName,
           client: newPortfolio.clientName,
@@ -88,7 +85,6 @@ const Welcome: React.FC<WelcomeProps> = ({ user }) => {
   const handleSubscribe = async () => {
     setIsProcessing(true);
     setTimeout(async () => {
-      // Fixed: Removed 'as any' since id is now part of UserProfile
       await supabase.from('profiles').update({ is_subscribed: true }).eq('id', user.id);
       setIsSubscribed(true);
       setIsProcessing(false);
@@ -169,8 +165,6 @@ const Welcome: React.FC<WelcomeProps> = ({ user }) => {
             <div className="overflow-x-auto min-h-[300px]">
               {loadingItems ? (
                 <div className="p-20 flex justify-center"><Loader2 className="w-8 h-8 text-indigo-600 animate-spin" /></div>
-              ) : portfolios.length === 0 ? (
-                <div className="p-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No projects found. Add your first masterpiece.</div>
               ) : (
                 <table className="w-full text-left">
                   <thead className="bg-slate-50 text-[10px] uppercase font-black text-slate-400 tracking-widest">
@@ -187,11 +181,6 @@ const Welcome: React.FC<WelcomeProps> = ({ user }) => {
                         <td className="px-8 py-6">
                           <h4 className="font-bold text-slate-900">{p.name}</h4>
                           <p className="text-[10px] uppercase font-black text-indigo-400 tracking-wider">{p.client}</p>
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {p.tags.map((t, idx) => (
-                              <span key={idx} className="text-[8px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">{t}</span>
-                            ))}
-                          </div>
                         </td>
                         <td className="px-8 py-6">{platformIcons[p.platform] || platformIcons['Other']}</td>
                         <td className="px-8 py-6 text-xs text-slate-500 font-bold">{new Date(p.created_at).toLocaleDateString()}</td>
